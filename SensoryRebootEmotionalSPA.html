@@ -1250,31 +1250,122 @@
                 font-size: 3rem;
             }
             
+            /* 移动端全屏布局优化 */
+            body {
+                overflow: hidden;
+                height: 100vh;
+            }
+            
+            .hero {
+                min-height: 100vh;
+                padding: 3rem 1rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .module-card {
+                height: 100vh;
+                padding: 2rem 1.5rem;
+                margin-bottom: 0;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            
+            .question-block {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 0;
+            }
+            
+            .question-navigation {
+                margin-top: auto;
+                padding-top: 1rem;
+                border-top: 1px dashed rgba(156, 175, 152, 0.2);
+            }
+            
             /* 字体大小适配 */
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
             
             .question-text {
                 font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .question-hint {
+                font-size: 0.8rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .option-item {
+                padding: 0.8rem;
+                margin-bottom: 0.8rem;
             }
             
             .option-label {
                 font-size: 0.9rem;
+                margin-bottom: 0.3rem;
             }
             
-            /* 间距调整 */
-            .question-block {
-                margin-bottom: 1.5rem;
+            .option-desc {
+                font-size: 0.8rem;
             }
             
-            .audio-experience,
+            /* 音频体验适配 */
+            .audio-experience {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                margin-bottom: 0;
+            }
+            
+            .audio-player-wrapper {
+                padding: 1.5rem;
+            }
+            
+            .audio-visualizer {
+                width: 100px;
+                height: 100px;
+                margin: 1rem auto;
+            }
+            
+            .audio-title {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .audio-meta {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            /* 视觉冥想适配 */
             .visual-experience {
-                margin-bottom: 1.5rem;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                margin-bottom: 0;
+            }
+            
+            .visual-mediation-image {
+                width: 260px;
+                height: 260px;
+                margin: 1rem auto;
+            }
+            
+            .gaze-timer {
+                font-size: 2.5rem;
+                margin: 1rem 0;
             }
             
             /* 进度条和音量控制适配 */
