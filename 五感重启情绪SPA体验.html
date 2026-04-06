@@ -1,0 +1,3265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内在天气 · 五感重启体验</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== CSS 变量定义 ========== */
+        :root {
+            --color-primary: #9CAF98;
+            --color-secondary: #B8C4D0;
+            --color-accent: #D4A5A5;
+            --color-warm: #E8DCC4;
+            --color-text: #2C3E50;
+            --color-text-light: #5D6D7E;
+            --color-bg: #FAFBFC;
+            --color-white: #FFFFFF;
+            --shadow-soft: 0 2px 20px rgba(156, 175, 152, 0.15);
+            --shadow-medium: 0 4px 30px rgba(44, 62, 80, 0.10);
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ========== 基础重置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        /* ========== 导航栏 ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(250, 251, 252, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(156, 175, 152, 0.1);
+            transition: var(--transition);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 400;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* ========== Hero 区域（商品封面） ========== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(236, 220, 196, 0.4) 0%, 
+                rgba(184, 196, 208, 0.3) 50%, 
+                rgba(156, 175, 152, 0.3) 100%);
+            z-index: -1;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(212, 165, 165, 0.15) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(3deg); }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(156, 175, 152, 0.12);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--color-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--color-text);
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--color-text-light);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+            max-width: 480px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary), #8BA994);
+            color: white;
+            box-shadow: 0 4px 20px rgba(156, 175, 152, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(156, 175, 152, 0.45);
+        }
+
+        .btn-secondary {
+            background: var(--color-white);
+            color: var(--color-text);
+            border: 1.5px solid rgba(156, 175, 152, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-primary);
+            background: rgba(156, 175, 152, 0.05);
+        }
+
+        /* Hero 视觉卡片 */
+        .hero-visual {
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .product-card {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-medium);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                var(--color-primary), 
+                var(--color-secondary), 
+                var(--color-accent));
+        }
+
+        .card-image-area {
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, 
+                rgba(156, 175, 152, 0.08) 0%, 
+                rgba(184, 196, 208, 0.12) 100%);
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weather-display {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .weather-icon-large {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: gentlePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .weather-label {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            color: var(--color-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .weather-temp {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--color-primary);
+        }
+
+        .card-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1rem 0.5rem;
+            background: rgba(156, 175, 152, 0.06);
+            border-radius: var(--radius-sm);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text {
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+        }
+
+        .price-tag {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(156, 175, 152, 0.15);
+        }
+
+        .price-current {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .price-current small {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            font-weight: 400;
+        }
+
+        .price-original {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            text-decoration: line-through;
+        }
+
+        /* ========== 特性介绍区 ========== */
+        .features-section {
+            padding: 6rem 2rem;
+            background: var(--color-white);
+        }
+
+        .section-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 0.85rem;
+            color: var(--color-primary);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--color-text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem;
+            border-radius: var(--radius-md);
+            background: var(--color-bg);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-soft);
+            border-color: rgba(156, 175, 152, 0.2);
+        }
+
+        .feature-icon-lg {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card:nth-child(1) .feature-icon-lg {
+            background: rgba(212, 165, 165, 0.15);
+            color: #D4A5A5;
+        }
+
+        .feature-card:nth-child(2) .feature-icon-lg {
+            background: rgba(156, 175, 152, 0.15);
+            color: var(--color-primary);
+        }
+
+        .feature-card:nth-child(3) .feature-icon-lg {
+            background: rgba(184, 196, 208, 0.2);
+            color: var(--color-secondary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--color-text);
+        }
+
+        .feature-card p {
+            color: var(--color-text-light);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ========== 测试体验主区域 ========== */
+        .experience-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-white) 100%);
+        }
+
+        .experience-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            margin-bottom: 3rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-step {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+        }
+
+        .progress-step.active {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .progress-track {
+            height: 6px;
+            background: rgba(156, 175, 152, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* 模块卡片 */
+        .module-card {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            display: none;
+        }
+
+        .module-card.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .module-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 0.75rem;
+        }
+
+        .module-desc {
+            color: var(--color-text-light);
+            font-size: 0.95rem;
+        }
+
+        /* 题目样式 */
+        .question-block {
+            margin-bottom: 2.5rem;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .question-hint {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-item {
+            padding: 1.25rem 1.5rem;
+            border: 2px solid rgba(156, 175, 152, 0.2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: var(--color-white);
+        }
+
+        .option-item:hover {
+            border-color: var(--color-primary);
+            background: rgba(156, 175, 152, 0.04);
+            transform: translateX(5px);
+        }
+
+        .option-item.selected {
+            border-color: var(--color-primary);
+            background: rgba(156, 175, 152, 0.08);
+        }
+
+        .option-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(156, 175, 152, 0.4);
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .option-item.selected .option-radio {
+            border-color: var(--color-primary);
+        }
+
+        .option-item.selected .option-radio::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: var(--color-primary);
+            border-radius: 50%;
+        }
+
+        .option-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(156, 175, 152, 0.4);
+            border-radius: 6px;
+            flex-shrink: 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .option-item.selected .option-checkbox {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+        }
+
+        .option-item.selected .option-checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-label {
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .option-desc {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            line-height: 1.5;
+        }
+
+        /* 多选限制提示 */
+        .multi-select-hint {
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        /* ===== 新增：题目级导航按钮 ===== */
+        .question-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px dashed rgba(156, 175, 152, 0.2);
+            gap: 1rem;
+        }
+
+        .q-nav-btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1.5px solid rgba(156, 175, 152, 0.25);
+            background: var(--color-white);
+            color: var(--color-text);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: inherit;
+        }
+
+        .q-nav-btn:hover:not(:disabled) {
+            border-color: var(--color-primary);
+            background: rgba(156, 175, 152, 0.15);
+            color: var(--color-text);
+        }
+
+        .q-nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .q-nav-btn-next {
+            background: linear-gradient(135deg, var(--color-primary), #8BA994);
+            color: white;
+            border: none;
+        }
+
+        .q-nav-btn-next:hover:not(:disabled) {
+            background: linear-gradient(135deg, #92B48B, #7A9A82);
+            transform: translateX(3px);
+            box-shadow: 0 4px 15px rgba(156, 175, 152, 0.3);
+            color: white;
+        }
+
+        .question-counter {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            font-weight: 500;
+        }
+
+        /* 音频体验样式 */
+        .audio-experience {
+            text-align: center;
+        }
+
+        .audio-player-wrapper {
+            background: linear-gradient(135deg, rgba(156, 175, 152, 0.08), rgba(184, 196, 208, 0.12));
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .audio-visualizer {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(156, 175, 152, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(156, 175, 152, 0); }
+        }
+
+        .audio-visualizer.playing {
+            animation: none;
+            box-shadow: 0 0 0 10px rgba(156, 175, 152, 0.2);
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--color-primary);
+            z-index: 2;
+        }
+
+        .audio-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .audio-meta {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+
+        .audio-progress {
+            margin-top: 1.5rem;
+        }
+
+        .audio-progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .audio-progress-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.1s linear;
+            border-radius: 3px;
+        }
+
+        .audio-time {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 音量控制（新增） */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .volume-slider {
+            width: 120px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* 视觉体验样式 */
+        .visual-experience {
+            text-align: center;
+        }
+
+        .image-display {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .image-display img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .image-display:hover img {
+            transform: scale(1.02);
+        }
+
+        .image-gaze-timer {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        /* 模块级导航按钮 */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn-prev {
+            background: var(--color-bg);
+            color: var(--color-text);
+        }
+
+        .nav-btn-prev:hover {
+            background: rgba(156, 175, 152, 0.15);
+        }
+
+        .nav-btn-next {
+            background: linear-gradient(135deg, var(--color-primary), #8BA994);
+            color: white;
+        }
+
+        .nav-btn-next:hover {
+            background: linear-gradient(135deg, #92B48B, #7A9A82);
+            transform: translateX(3px);
+            box-shadow: 0 4px 20px rgba(156, 175, 152, 0.35);
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ========== 结果页面 ========== */
+        .result-page {
+            display: none;
+            padding: 3rem 2rem;
+        }
+
+        .result-page.show {
+            display: block;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .result-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .result-weather-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: gentleBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .result-weather-type {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-weather-desc {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .result-body {
+            padding: 2.5rem;
+        }
+
+        .result-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(156, 175, 152, 0.15);
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .result-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-metric {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+        }
+
+        .result-metric-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(156, 175, 152, 0.12);
+        }
+
+        .result-metric-info {
+            flex: 1;
+        }
+
+        .result-metric-label {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+
+        .result-metric-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .recommendation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+        }
+
+        .recommendation-item::before {
+            content: '✓';
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+
+        /* ========== 页脚 ========== */
+        .footer {
+            background: var(--color-text);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .footer-disclaimer {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-hotline {
+            font-size: 0.9rem;
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+
+        /* ========== 响应式设计 ========== */
+        @media (max-width: 900px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .hero-visual {
+                order: -1;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-stats {
+                gap: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 5rem 1.25rem 3rem;
+            }
+
+            .module-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .option-item {
+                padding: 1rem;
+            }
+
+            .navigation-buttons,
+            .question-navigation {
+                flex-direction: column;
+            }
+
+            .nav-btn,
+            .q-nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .card-features {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
+            
+            /* 音频播放器移动端适配 */
+            .audio-player-wrapper {
+                padding: 1.5rem;
+            }
+            
+            .audio-visualizer {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .audio-title {
+                font-size: 1rem;
+            }
+            
+            .audio-meta {
+                font-size: 0.8rem;
+            }
+            
+            /* 视觉冥想移动端适配 */
+            .visual-mediation-image {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .gaze-timer {
+                font-size: 3rem;
+            }
+            
+            /* 字体大小适配 */
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .question-text {
+                font-size: 1rem;
+            }
+            
+            .option-label {
+                font-size: 0.9rem;
+            }
+            
+            /* 间距调整 */
+            .question-block {
+                margin-bottom: 1.5rem;
+            }
+            
+            .audio-experience,
+            .visual-experience {
+                margin-bottom: 1.5rem;
+            }
+            
+            /* 进度条和音量控制适配 */
+            .audio-progress-bar,
+            .volume-slider {
+                height: 6px;
+            }
+            
+            .audio-time {
+                font-size: 0.8rem;
+            }
+            
+            .feature-item {
+                padding: 0.75rem 0.25rem;
+            }
+            
+            .feature-text {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ========== 隐藏类 ========== */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="logo">
+                <span class="logo-icon">☁</span>
+                内在天气
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">产品特色</a></li>
+                <li><a href="#experience">开始体验</a></li>
+                <li><a href="#" onclick="scrollToExperience()">立即测试</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero 封面区域 -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    ✨ 五感重启 · 情绪SPA体验
+                </div>
+                <h1 class="hero-title">
+                    不是一次<span>心理测试</span><br>
+                    是一场与自己的温柔对话
+                </h1>
+                <p class="hero-subtitle">
+                    12分钟，4道情绪快照，4段听觉疗愈，4次视觉冥想<br>
+                    发现属于你的「内在天气」配方
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">次感官交互</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">8-10</span>
+                        <span class="stat-label">分钟完成</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">21+</span>
+                        <span class="stat-label">首疗愈音频</span>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#experience" class="btn btn-primary" onclick="scrollToExperience()">
+                        开始体验 →
+                    </a>
+                    <a href="#features" class="btn btn-secondary">
+                        了解更多 ↓
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="product-card">
+                    <div class="card-image-area">
+                        <div class="weather-display">
+                            <div class="weather-icon-large">⛅</div>
+                            <div class="weather-label">多云转晴</div>
+                            <div class="weather-temp">22°C</div>
+                        </div>
+                    </div>
+                    <div class="card-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">🎧</div>
+                            <div class="feature-text">听觉疗愈</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">👁️</div>
+                            <div class="feature-text">视觉冥想</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">个性报告</div>
+                        </div>
+                    </div>
+                    <div class="price-tag">
+                        <div class="price-current">
+                            ¥39.9 <small>/ 完整版</small>
+                        </div>
+                        <div class="price-original">¥99.0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特色介绍 -->
+    <section class="features-section" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <div class="section-tag">Why This Works</div>
+                <h2 class="section-title">为什么选择五感体验？</h2>
+                <p class="section-desc">
+                    传统心理测试只有冰冷的题目<br>我们用多感官体验，让觉察变得温暖而自然
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-lg">💫</div>
+                    <h3>情绪快照</h3>
+                    <p>4道精心设计的问题，像和朋友聊天一样自然。不评判、不对错，只是照见此刻真实的自己。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-lg">🎵</div>
+                    <h3>听觉疗愈</h3>
+                    <p>4段沉浸式音频体验——雨声、钢琴、ASMR、宇宙频率。发现哪种声音能让你的心瞬间安静。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-lg">🎨</div>
+                    <h3>视觉冥想</h3>
+                    <p>4张治愈系图像凝视。色彩心理学基础设计，找到能安抚你灵魂的视觉密码。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 测试体验主区域 -->
+    <section class="experience-section" id="experience">
+        <div class="experience-wrapper">
+            
+            <!-- 进度条 -->
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-info">
+                    <span class="progress-step active" id="currentStepLabel">模块一：情绪快照</span>
+                    <span class="progress-step" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- ==================== 模块一：情绪快照 ==================== -->
+            <div class="module-card active" id="module1">
+                <div class="module-header">
+                    <div class="module-number">1</div>
+                    <h2 class="module-title">情绪快照</h2>
+                    <p class="module-desc">4道问题，捕捉你此刻的情绪天气</p>
+                </div>
+
+                <!-- 第1题 -->
+                <div class="question-block" data-question="1" data-module="1">
+                    <div class="question-text">如果此时此刻，你内心的天空呈现一种天气，那是？</div>
+                    <div class="question-hint">请凭直觉选择，不要过度思考</div>
+                    <div class="options-list" data-type="single">
+                        <div class="option-item" data-value="A">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">☀️ 晴朗温暖</div>
+                                <div class="option-desc">"阳光正好，心里暖暖的，有种'今天会很好'的感觉"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="B">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">⛅ 多云转晴</div>
+                                <div class="option-desc">"整体还好啦，飘过几朵乌云但不影响好心情"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="C">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">☁️ 阴天绵绵</div>
+                                <div class="option-desc">"说不上难过...就是有点提不起劲"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="D">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">🌧️ 细雨淅沥</div>
+                                <div class="option-desc">"有些潮湿的心绪，容易想多，想哭也可以"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="E">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">⛈️ 雷阵雨</div>
+                                <div class="option-desc">"情绪像过山车，时而暴雨时而放晴"</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 题目级导航：第1题 -->
+                    <div class="question-navigation">
+                        <button class="q-nav-btn q-nav-btn-prev" disabled onclick="prevQuestion(this)">
+                            ← 上一题
+                        </button>
+                        <span class="question-counter">1 / 4</span>
+                        <button class="q-nav-btn q-nav-btn-next" onclick="nextQuestion(this)">
+                            下一题 →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 第2题 -->
+                <div class="question-block hidden" data-question="2" data-module="1">
+                    <div class="question-text">回想过去这一周，如果给压力打分（0=完全轻松，10=难以承受），你会打？</div>
+                    <div class="question-hint">闭上眼3秒，感受身体的答案</div>
+                    <div class="options-list" data-type="single">
+                        <div class="option-item" data-value="A">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">0-2分 轻若无物</div>
+                                <div class="option-desc">"生活很自在，偶尔的小波折像微风拂过"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="B">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">3-4分 微风拂面</div>
+                                <div class="option-desc">"有些事情在操心，但完全在掌控之中"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="C">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">5-6分 和煦暖阳</div>
+                                <div class="option-desc">"能明显感觉到压力，需要刻意安排放松"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="D">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">7-8分 骄阳似火</div>
+                                <div class="option-desc">"经常焦虑紧张，像背着隐形的重担"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="E">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">9-10分 暴风雨中</div>
+                                <div class="option-desc">"快要撑不住了，每一天都在咬牙坚持"</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 题目级导航：第2题 -->
+                    <div class="question-navigation">
+                        <button class="q-nav-btn q-nav-btn-prev" onclick="prevQuestion(this)">
+                            ← 上一题
+                        </button>
+                        <span class="question-counter">2 / 4</span>
+                        <button class="q-nav-btn q-nav-btn-next" onclick="nextQuestion(this)">
+                            下一题 →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 第3题 -->
+                <div class="question-block hidden" data-question="3" data-module="1">
+                    <div class="question-text">当我们忽略情绪时，身体会用它的语言提醒我们。最近你的身体最常发出哪种信号？</div>
+                    <div class="multi-select-hint">可多选，最多选2个最明显的</div>
+                    <div class="options-list" data-type="multiple" data-max="2">
+                        <div class="option-item" data-value="A">
+                            <span class="option-checkbox"></span>
+                            <div class="option-content">
+                                <div class="option-label">💪 肩颈区域</div>
+                                <div class="option-desc">"肩膀像扛着什么，脖子僵硬转不动"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="B">
+                            <span class="option-checkbox"></span>
+                            <div class="option-content">
+                                <div class="option-label">🫁 心肺区域</div>
+                                <div class="option-desc">"胸口闷闷的，呼吸变浅变急"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="C">
+                            <span class="option-checkbox"></span>
+                            <div class="option-content">
+                                <div class="option-label">🤢 肠胃区域</div>
+                                <div class="option-desc">"胃口变了，要么吃不下要么想吃很多"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="D">
+                            <span class="option-checkbox"></span>
+                            <div class="option-content">
+                                <div class="option-label">😵‍💫 头部区域</div>
+                                <div class="option-desc">"头痛、偏头痛，或者脑子像灌了铅"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="E">
+                            <span class="option-checkbox"></span>
+                            <div class="option-content">
+                                <div class="option-label">💓 心脏区域</div>
+                                <div class="option-desc">"心跳加速，手心冒汗，坐立难安"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="F">
+                            <span class="option-checkbox"></span>
+                            <div class="option-content">
+                                <div class="option-label">😴 睡眠区域</div>
+                                <div class="option-desc">"睡不着、多梦、或者睡醒了还累"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="G">
+                            <span class="option-checkbox"></span>
+                            <div class="option-content">
+                                <div class="option-label">🤷 全身说不清</div>
+                                <div class="option-desc">"身体好像没什么大问题，就是心里堵得慌"</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 题目级导航：第3题 -->
+                    <div class="question-navigation">
+                        <button class="q-nav-btn q-nav-btn-prev" onclick="prevQuestion(this)">
+                            ← 上一题
+                        </button>
+                        <span class="question-counter">3 / 4</span>
+                        <button class="q-nav-btn q-nav-btn-next" onclick="nextQuestion(this)">
+                            下一题 →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 第4题 -->
+                <div class="question-block hidden" data-question="4" data-module="1">
+                    <div class="question-text">做完前面三道题后，此时此刻，你最渴望得到的是什么？</div>
+                    <div class="question-hint">诚实面对自己，没有标准答案</div>
+                    <div class="options-list" data-type="single">
+                        <div class="option-item" data-value="A">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">🤗 一个大大的拥抱</div>
+                                <div class="option-desc">"想要被看见、被理解、被无条件接纳"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="B">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">😴 一次深度睡眠</div>
+                                <div class="option-desc">"身心都累了，想彻底关机重启一下"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="C">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">🧘 一段独处时光</div>
+                                <div class="option-desc">"不想说话，不想应付任何人，只想和自己待一会儿"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="D">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">💬 一次真诚的倾诉</div>
+                                <div class="option-desc">"心里装了太多话，想找个人好好说说"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="E">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">🛠️ 一些实用的方法</div>
+                                <div class="option-desc">"不想只停留在感受层面，想知道可以做些什么来改变"</div>
+                            </div>
+                        </div>
+                        <div class="option-item" data-value="F">
+                            <span class="option-radio"></span>
+                            <div class="option-content">
+                                <div class="option-label">🌿 允许自己不那么好</div>
+                                <div class="option-desc">"不想被'治愈'或'改善'，只想被允许就这样待一会儿"</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 题目级导航：第4题（最后一题） -->
+                    <div class="question-navigation">
+                        <button class="q-nav-btn q-nav-btn-prev" onclick="prevQuestion(this)">
+                            ← 上一题
+                        </button>
+                        <span class="question-counter">4 / 4</span>
+                        <button class="q-nav-btn q-nav-btn-next" onclick="nextModule()">
+                            完成模块一 →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 模块一级别导航 -->
+                <div class="navigation-buttons">
+                    <button class="nav-btn nav-btn-prev" disabled onclick="prevModule()">← 返回封面</button>
+                    <button class="nav-btn nav-btn-next" onclick="nextModule()">进入听觉体验 →</button>
+                </div>
+            </div>
+
+            <!-- ==================== 模块二：听觉疗愈 ==================== -->
+            <div class="module-card" id="module2">
+                <div class="module-header">
+                    <div class="module-number">2</div>
+                    <h2 class="module-title">听觉疗愈空间</h2>
+                    <p class="module-desc">戴上耳机，让声音带你发现内心的平静</p>
+                </div>
+
+                <!-- 第1题：雨声白噪音 -->
+                <div class="question-block" data-question="5" data-module="2">
+                    <div class="audio-experience">
+                        <div class="audio-player-wrapper" id="audioPlayerWrapper1">
+                            <div class="audio-visualizer" id="audioVisualizer1" onclick="toggleAudioPlay(1)">
+                                <div class="play-btn" id="playBtnIcon1">▶</div>
+                            </div>
+                            <div class="audio-title" id="audioTitle1">晨间细雨 · 白噪音疗愈</div>
+                            <div class="audio-meta" id="audioMeta1">自然白噪音 · 25秒 · 请佩戴耳机</div>
+                            
+                            <div class="audio-progress">
+                                <div class="audio-progress-bar" id="audioProgressBar1" onclick="seekAudio(event, 1)">
+                                    <div class="audio-progress-fill" id="audioProgressFill1"></div>
+                                </div>
+                                <div class="audio-time">
+                                    <span id="audioCurrentTime1">0:00</span>
+                                    <span id="audioDuration1">0:25</span>
+                                </div>
+                            </div>
+
+                            <!-- 音量控制 -->
+                            <div class="volume-control">
+                                <span>🔊</span>
+                                <input type="range" class="volume-slider" id="volumeSlider1" min="0" max="100" value="70" oninput="changeVolume(this.value, 1)">
+                                <span id="volumeValue1">70%</span>
+                            </div>
+                        </div>
+
+                        <div class="question-text">听完这段声音后的第一感觉是？</div>
+                        <div class="question-hint">相信你的第一直觉</div>
+                        <div class="options-list" data-type="single">
+                            <div class="option-item" data-value="A">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😌 舒服、安心、想蜷起来睡觉</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="B">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🌿 清新、仿佛置身森林清晨</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="C">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😐 平静、没什么特别波澜</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="D">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">☔ 有点阴沉、莫名感到伤感</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="E">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">⚡ 不喜欢、让我有些烦躁不安</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-navigation">
+                            <button class="q-nav-btn q-nav-btn-prev" onclick="prevModule()">
+                                ← 返回情绪快照
+                            </button>
+                            <span class="question-counter">1 / 3</span>
+                            <button class="q-nav-btn q-nav-btn-next" onclick="nextQuestion(this)">
+                                下一题 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第2题：钢琴冥想 -->
+                <div class="question-block hidden" data-question="6" data-module="2">
+                    <div class="audio-experience">
+                        <div class="audio-player-wrapper" id="audioPlayerWrapper2">
+                            <div class="audio-visualizer" id="audioVisualizer2" onclick="toggleAudioPlay(2)">
+                                <div class="play-btn" id="playBtnIcon2">▶</div>
+                            </div>
+                            <div class="audio-title" id="audioTitle2">钢琴冥想 · 心灵治愈</div>
+                            <div class="audio-meta" id="audioMeta2">钢琴音乐 · 30秒 · 请佩戴耳机</div>
+                            
+                            <div class="audio-progress">
+                                <div class="audio-progress-bar" id="audioProgressBar2" onclick="seekAudio(event, 2)">
+                                    <div class="audio-progress-fill" id="audioProgressFill2"></div>
+                                </div>
+                                <div class="audio-time">
+                                    <span id="audioCurrentTime2">0:00</span>
+                                    <span id="audioDuration2">0:30</span>
+                                </div>
+                            </div>
+
+                            <!-- 音量控制 -->
+                            <div class="volume-control">
+                                <span>🔊</span>
+                                <input type="range" class="volume-slider" id="volumeSlider2" min="0" max="100" value="70" oninput="changeVolume(this.value, 2)">
+                                <span id="volumeValue2">70%</span>
+                            </div>
+                        </div>
+
+                        <div class="question-text">听完这段音乐后的感受是？</div>
+                        <div class="question-hint">关注身体的感受</div>
+                        <div class="options-list" data-type="single">
+                            <div class="option-item" data-value="A">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🎹 沉浸其中，内心变得宁静</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="B">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🌈 感到温暖和被理解</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="C">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😌 放松下来，压力减轻了</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="D">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🤔 没什么特别感觉</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="E">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😕 有点烦躁，想快点结束</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-navigation">
+                            <button class="q-nav-btn q-nav-btn-prev" onclick="prevQuestion(this)">
+                                ← 上一题
+                            </button>
+                            <span class="question-counter">2 / 3</span>
+                            <button class="q-nav-btn q-nav-btn-next" onclick="nextQuestion(this)">
+                                下一题 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第3题：ASMR疗愈 -->
+                <div class="question-block hidden" data-question="7" data-module="2">
+                    <div class="audio-experience">
+                        <div class="audio-player-wrapper" id="audioPlayerWrapper3">
+                            <div class="audio-visualizer" id="audioVisualizer3" onclick="toggleAudioPlay(3)">
+                                <div class="play-btn" id="playBtnIcon3">▶</div>
+                            </div>
+                            <div class="audio-title" id="audioTitle3">ASMR触发音 · 深度放松</div>
+                            <div class="audio-meta" id="audioMeta3">ASMR体验 · 20秒 · 请佩戴耳机</div>
+                            
+                            <div class="audio-progress">
+                                <div class="audio-progress-bar" id="audioProgressBar3" onclick="seekAudio(event, 3)">
+                                    <div class="audio-progress-fill" id="audioProgressFill3"></div>
+                                </div>
+                                <div class="audio-time">
+                                    <span id="audioCurrentTime3">0:00</span>
+                                    <span id="audioDuration3">0:20</span>
+                                </div>
+                            </div>
+
+                            <!-- 音量控制 -->
+                            <div class="volume-control">
+                                <span>🔊</span>
+                                <input type="range" class="volume-slider" id="volumeSlider3" min="0" max="100" value="70" oninput="changeVolume(this.value, 3)">
+                                <span id="volumeValue3">70%</span>
+                            </div>
+                        </div>
+
+                        <div class="question-text">这段声音给你的感觉是？</div>
+                        <div class="question-hint">关注身体的细微感受</div>
+                        <div class="options-list" data-type="single">
+                            <div class="option-item" data-value="A">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">✨ 头皮发麻，特别放松</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="B">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😌 很舒服，想闭上眼睛</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="C">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😐 一般，没什么特别</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="D">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😕 有点痒，不太习惯</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="E">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">⚡ 不舒服，想关掉</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-navigation">
+                            <button class="q-nav-btn q-nav-btn-prev" onclick="prevQuestion(this)">
+                                ← 上一题
+                            </button>
+                            <span class="question-counter">3 / 3</span>
+                            <button class="q-nav-btn q-nav-btn-next" onclick="nextModule()">
+                                完成听觉体验 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模块二级别导航 -->
+                <div class="navigation-buttons">
+                    <button class="nav-btn nav-btn-prev" onclick="prevModule()">← 返回情绪快照</button>
+                    <button class="nav-btn nav-btn-next" onclick="nextModule()">进入视觉冥想 →</button>
+                </div>
+            </div>
+
+            <!-- ==================== 模块三：视觉冥想 ==================== -->
+            <div class="module-card" id="module3">
+                <div class="module-header">
+                    <div class="module-number">3</div>
+                    <h2 class="module-title">视觉冥想空间</h2>
+                    <p class="module-desc">凝视图像，让色彩照见你的内心</p>
+                </div>
+
+                <!-- 第1题：莫兰迪色系 -->
+                <div class="question-block" data-question="8" data-module="3">
+                    <div class="visual-experience">
+                        <div class="image-display">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 1080'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%23D4A5A5'/%3E%3Cstop offset='20%25' style='stop-color:%23E8DCC4'/%3E%3Cstop offset='40%25' style='stop-color:%23B8C4D0'/%3E%3Cstop offset='60%25' style='stop-color:%239CAF98'/%3E%3Cstop offset='80%25' style='stop-color:%23D4C5B5'/%3E%3Cstop offset='100%25' style='stop-color:%23E0CCC0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='1080' height='1080'/%3E%3C/svg%3E" alt="温柔的底色 - 莫兰迪色系渐变" id="visualImage1">
+                            <div class="image-gaze-timer" id="gazeTimer1">请凝视图像... 15秒</div>
+                        </div>
+
+                        <div class="question-text">凝视这张图后，你的身体想？</div>
+                        <div class="question-hint">不需要分析美丑，只需要感受身体的第一反应</div>
+                        <div class="options-list" data-type="single">
+                            <div class="option-item" data-value="A">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🤗 想拥抱、感到温暖柔软</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="B">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😌 深呼一口气、放松了下来</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="C">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😐 平静、没有特别波动</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="D">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🥱 有点困、想睡觉</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="E">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😕 没感觉、就是几张颜色而已</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-navigation">
+                            <button class="q-nav-btn q-nav-btn-prev" onclick="prevModule()">
+                                ← 返回听觉体验
+                            </button>
+                            <span class="question-counter">1 / 3</span>
+                            <button class="q-nav-btn q-nav-btn-next" onclick="nextQuestion(this)">
+                                下一题 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第2题：星空意境 -->
+                <div class="question-block hidden" data-question="9" data-module="3">
+                    <div class="visual-experience">
+                        <div class="image-display">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 1080'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%230A0A23'/%3E%3Cstop offset='30%25' style='stop-color:%231A1A33'/%3E%3Cstop offset='60%25' style='stop-color:%232A2A44'/%3E%3Cstop offset='80%25' style='stop-color:%233A3A55'/%3E%3Cstop offset='100%25' style='stop-color:%234A4A66'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='1080' height='1080'/%3E%3Ccircle cx='200' cy='150' r='2' fill='%23FFFFFF'/%3E%3Ccircle cx='350' cy='200' r='1.5' fill='%23FFFFFF'/%3E%3Ccircle cx='450' cy='100' r='2' fill='%23FFFFFF'/%3E%3Ccircle cx='600' cy='180' r='1' fill='%23FFFFFF'/%3E%3Ccircle cx='750' cy='120' r='2' fill='%23FFFFFF'/%3E%3Ccircle cx='850' cy='220' r='1.5' fill='%23FFFFFF'/%3E%3Ccircle cx='150' cy='300' r='1' fill='%23FFFFFF'/%3E%3Ccircle cx='300' cy='350' r='2' fill='%23FFFFFF'/%3E%3Ccircle cx='500' cy='320' r='1.5' fill='%23FFFFFF'/%3E%3Ccircle cx='650' cy='380' r='1' fill='%23FFFFFF'/%3E%3Ccircle cx='800' cy='330' r='2' fill='%23FFFFFF'/%3E%3C/svg%3E" alt="星空意境 - 深邃宇宙" id="visualImage2">
+                            <div class="image-gaze-timer" id="gazeTimer2">请凝视图像... 15秒</div>
+                        </div>
+
+                        <div class="question-text">凝视这张星空图后，你的感受是？</div>
+                        <div class="question-hint">关注内心的感受</div>
+                        <div class="options-list" data-type="single">
+                            <div class="option-item" data-value="A">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🌌 感到渺小但充满希望</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="B">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">✨ 觉得宇宙很美，心情平静</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="C">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😌 有点梦幻，想沉浸其中</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="D">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😐 一般，没什么特别感觉</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="E">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😕 有点压抑，不太喜欢</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-navigation">
+                            <button class="q-nav-btn q-nav-btn-prev" onclick="prevQuestion(this)">
+                                ← 上一题
+                            </button>
+                            <span class="question-counter">2 / 3</span>
+                            <button class="q-nav-btn q-nav-btn-next" onclick="nextQuestion(this)">
+                                下一题 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第3题：森林生机 -->
+                <div class="question-block hidden" data-question="10" data-module="3">
+                    <div class="visual-experience">
+                        <div class="image-display">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 1080'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2387CEEB'/%3E%3Cstop offset='50%25' style='stop-color:%2398FB98'/%3E%3Cstop offset='100%25' style='stop-color:%2390EE90'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23sky)' width='1080' height='1080'/%3E%3Cpath d='M0,700 Q300,500 600,700 T1080,700 L1080,1080 L0,1080 Z' fill='%23228B22'/%3E%3Cpath d='M0,600 Q200,400 400,600 T800,600 L1080,600 L1080,700 L0,700 Z' fill='%2332CD32'/%3E%3Cpath d='M0,500 Q150,350 300,500 T600,500 L1080,500 L1080,600 L0,600 Z' fill='%2390EE90'/%3E%3C/svg%3E" alt="森林生机 - 绿色自然" id="visualImage3">
+                            <div class="image-gaze-timer" id="gazeTimer3">请凝视图像... 15秒</div>
+                        </div>
+
+                        <div class="question-text">看到这片森林，你的感受是？</div>
+                        <div class="question-hint">想象自己就在这片森林中</div>
+                        <div class="options-list" data-type="single">
+                            <div class="option-item" data-value="A">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🌿 感到充满活力，想深呼吸</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="B">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">🌳 觉得很舒服，想走进森林</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="C">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😌 平静放松，心情愉悦</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="D">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😐 一般，没什么特别感觉</div>
+                                </div>
+                            </div>
+                            <div class="option-item" data-value="E">
+                                <span class="option-radio"></span>
+                                <div class="option-content">
+                                    <div class="option-label">😕 不太喜欢，感觉单调</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-navigation">
+                            <button class="q-nav-btn q-nav-btn-prev" onclick="prevQuestion(this)">
+                                ← 上一题
+                            </button>
+                            <span class="question-counter">3 / 3</span>
+                            <button class="q-nav-btn q-nav-btn-next" onclick="showResult()">
+                                查看我的结果 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模块三级别导航 -->
+                <div class="navigation-buttons">
+                    <button class="nav-btn nav-btn-prev" onclick="prevModule()">← 返回听觉体验</button>
+                    <button class="nav-btn nav-btn-next" onclick="showResult()">查看情绪天气 →</button>
+                </div>
+            </div>
+
+            <!-- ==================== 结果页面 ==================== -->
+            <div class="result-page" id="resultPage">
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-weather-icon" id="resultWeatherIcon">⛅</div>
+                        <div class="result-weather-type" id="resultWeatherType">多云转晴型</div>
+                        <div class="result-weather-desc" id="resultWeatherDesc">整体还好，偶有小情绪但可自我调节</div>
+                    </div>
+                    <div class="result-body">
+                        <div class="result-section">
+                            <div class="result-section-title">🌡️ 核心指标</div>
+                            <div class="result-metric">
+                                <div class="result-metric-icon">🌡️</div>
+                                <div class="result-metric-info">
+                                    <div class="result-metric-label">压力指数</div>
+                                    <div class="result-metric-value" id="resultStressScore">58/100 · 轻中度</div>
+                                </div>
+                            </div>
+                            <div class="result-metric">
+                                <div class="result-metric-icon">💪</div>
+                                <div class="result-metric-info">
+                                    <div class="result-metric-label">主要身体信号</div>
+                                    <div class="result-metric-value" id="resultBodySignal">肩颈僵硬 / 睡眠质量</div>
+                                </div>
+                            </div>
+                            <div class="result-metric">
+                                <div class="result-metric-icon">🎯</div>
+                                <div class="result-metric-info">
+                                    <div class="result-metric-label">即时需求</div>
+                                    <div class="result-metric-value" id="resultNeed">需要被理解和接纳</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-section">
+                            <div class="result-section-title">🎧 你的听觉疗愈配方</div>
+                            <div class="recommendation-list" id="audioRecommendation">
+                                <div class="recommendation-item">主导类型：自然疗愈型（雨声、海浪）</div>
+                                <div class="recommendation-item">最佳聆听时段：睡前 22:00-23:00</div>
+                                <div class="recommendation-item">推荐完整版音频：「深夜海浪」「森林溪流」「钢琴呼吸」</div>
+                            </div>
+                        </div>
+
+                        <div class="result-section">
+                            <div class="result-section-title">👁️ 你的视觉疗愈配方</div>
+                            <div class="recommendation-list" id="visualRecommendation">
+                                <div class="recommendation-item">色彩偏好：暖色调（莫兰迪色系）</div>
+                                <div class="recommendation-item">场景偏好：温馨角落、安全私密空间</div>
+                                <div class="recommendation-item">推荐壁纸：「窗边阅读角」「安全的角落」</div>
+                            </div>
+                        </div>
+
+                        <div class="result-section">
+                            <div class="result-section-title">✨ 此刻建议</div>
+                            <div style="padding: 1.25rem; background: rgba(156, 175, 152, 0.08); border-radius: 12px; font-size: 0.95rem; line-height: 1.7; color: var(--color-text-light);">
+                                你的身体在说需要休息，但脑子停不下来。<br><br>
+                                今晚试试这个组合：<br>
+                                🎵 播放「大提琴拥抱」（10分钟）<br>
+                                👀 凝视「内在光芒-暖金版」（设为全屏背景）<br>
+                                ✋ 用厚毯子把自己裹紧（模拟拥抱触感）<br><br>
+                                整个流程约15分钟，然后好好睡一觉。
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <button class="btn btn-primary" onclick="location.reload()">🔄 重新测试</button>
+                            <p style="margin-top: 1.25rem; font-size: 0.85rem; color: var(--color-text-light);">
+                                📦 完整版包含 21首音频 + 25张高清素材 + 专属报告<br>
+                                <strong style="color: var(--color-primary);">仅需 ¥39.9</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">☁ 内在天气 · 五感重启</div>
+            <p class="footer-disclaimer">
+                本体验旨在帮助您更好地了解自己的情绪状态和感官偏好，结果仅供自我探索和娱乐参考。<br>
+                不构成任何形式的医疗诊断或治疗建议。<br><br>
+                如遇严重情绪困扰，或有自伤/伤人的想法，请及时寻求专业帮助。
+            </p>
+            <div class="footer-hotline">
+                📞 全国心理援助热线：400-161-9995
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== JavaScript 逻辑 ========== -->
+    <script>
+        // ========== 状态管理 ==========
+        const state = {
+            currentModule: 1,
+            totalModules: 3,
+            currentQuestionInModule: 1, // 当前模块内的题目序号
+            answers: {},
+            
+            // 音频相关状态
+            audioContext: null,
+            audioSource: null,
+            audioGainNode: null,
+            audioPlaying: false,
+            audioStartTime: 0,
+            audioPausedAt: 0,
+            audioDuration: 25, // 秒
+            audioVolume: 0.7,
+            audioProgressInterval: null, // 音频进度更新定时器
+            
+            // 各模块的题目配置
+            moduleQuestions: {
+                1: { total: 4, current: 1 },
+                2: { total: 3, current: 1 },
+                3: { total: 3, current: 1 }
+            },
+            
+            // 凝视计时
+            gazeStartTime: null,
+            gazeDuration: 15000,
+            gazeTimerInterval: null // 凝视计时器
+        };
+
+        // 天气类型映射
+        const weatherTypes = {
+            'A': { icon: '☀️', type: '晴朗型', desc: '心情不错，能量充足，今天能行！' },
+            'B': { icon: '⛅', type: '多云转晴型', desc: '整体还好，偶有波动但可自我调节' },
+            'C': { icon: '☁️', type: '阴天型', desc: '有些低沉，提不起劲，需要一些光亮' },
+            'D': { icon: '🌧️', type: '细雨型', desc: '容易伤感，允许自己哭出来也没关系' },
+            'E': { icon: '⛈️', type: '雷阵雨型', desc: '情绪波动大，需要找到出口释放' }
+        };
+
+        const stressScores = { 'A': 15, 'B': 32, 'C': 55, 'D': 78, 'E': 92 };
+        const bodySignals = {
+            'A': '肩颈僵硬', 'B': '胸闷气短', 'C': '肠胃不适',
+            'D': '头痛疲劳', 'E': '心跳加速', 'F': '睡眠障碍', 'G': '全身说不清'
+        };
+        const needsMap = {
+            'A': '需要一个温暖的拥抱', 'B': '渴望深度休息',
+            'C': '想要独处空间', 'D': '想要倾诉',
+            'E': '需要实用方法', 'F': '允许自己就这样'
+        };
+
+        // ========== 导航函数 ==========
+        function scrollToExperience() {
+            document.getElementById('experience').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateProgress() {
+            const progress = ((state.currentModule - 1) / (state.totalModules - 1)) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressPercent').textContent = `${Math.round(progress)}%`;
+            
+            const labels = ['模块一：情绪快照', '模块二：听觉疗愈', '模块三：视觉冥想'];
+            document.getElementById('currentStepLabel').textContent = labels[state.currentModule - 1];
+        }
+
+        // ========== 问题一修复：题目级导航函数 ==========
+        
+        /**
+         * 显示指定题目（在当前模块内切换）
+         * @param {number} questionNum - 要显示的题目编号（从1开始）
+         */
+        function showQuestion(questionNum) {
+            const currentModuleEl = document.getElementById(`module${state.currentModule}`);
+            
+            // 隐藏当前模块的所有题目
+            currentModuleEl.querySelectorAll('.question-block').forEach(q => {
+                q.classList.add('hidden');
+            });
+            
+            // 显示目标题目
+            const targetQ = currentModuleEl.querySelector(`[data-question="${questionNum}"]`);
+            if (targetQ) {
+                targetQ.classList.remove('hidden');
+                state.moduleQuestions[state.currentModule].current = questionNum;
+                
+                // 更新该题目导航按钮的状态
+                updateQuestionNavButtons(questionNum);
+                
+                // 平滑滚动到题目位置
+                setTimeout(() => {
+                    targetQ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
+        /**
+         * 点击"下一题"按钮
+         * @param {HTMLElement} btn - 按钮元素（用于定位）
+         */
+        function nextQuestion(btn) {
+            const questionBlock = btn.closest('.question-block');
+            const questionNum = parseInt(questionBlock.dataset.question);
+            const moduleNum = parseInt(questionBlock.dataset.module);
+            const totalQuestions = state.moduleQuestions[moduleNum].total;
+            
+            // 先保存当前题目的答案（验证是否已答）
+            if (!validateSingleQuestion(questionBlock)) {
+                shakeElement(questionBlock);
+                return;
+            }
+            
+            // 计算当前模块内的题目序号
+            let moduleQuestionIndex;
+            if (moduleNum === 1) moduleQuestionIndex = questionNum;
+            else if (moduleNum === 2) moduleQuestionIndex = questionNum - 4;
+            else moduleQuestionIndex = questionNum - 7;
+            
+            if (moduleQuestionIndex < totalQuestions) {
+                // 还有下一题，显示它
+                let nextQuestionNum;
+                if (moduleNum === 1) nextQuestionNum = questionNum + 1;
+                else if (moduleNum === 2) nextQuestionNum = questionNum + 1;
+                else nextQuestionNum = questionNum + 1;
+                showQuestion(nextQuestionNum);
+            } else {
+                // 当前模块的最后一题，触发模块切换
+                nextModule();
+            }
+        }
+
+        /**
+         * 点击"上一题"按钮
+         * @param {HTMLElement} btn - 按钮元素
+         */
+        function prevQuestion(btn) {
+            const questionBlock = btn.closest('.question-block');
+            const questionNum = parseInt(questionBlock.dataset.question);
+            
+            if (questionNum > 1) {
+                // 显示上一题
+                showQuestion(questionNum - 1);
+            }
+            // 如果是第1题，上一题按钮应该被禁用，不会执行到这里
+        }
+
+        /**
+         * 更新题目导航按钮的状态（禁用/启用）
+         * @param {number} currentQ - 当前题目号
+         */
+        function updateQuestionNavButtons(currentQ) {
+            const questionBlock = document.querySelector(`[data-question="${currentQ}"].module-card.active .question-block:not(.hidden)`);
+            if (!questionBlock) return;
+            
+            const nav = questionBlock.querySelector('.question-navigation');
+            if (!nav) return;
+            
+            const prevBtn = nav.querySelector('.q-nav-btn-prev');
+            const nextBtn = nav.querySelector('.q-nav-btn-next');
+            const counter = nav.querySelector('.question-counter');
+            const moduleNum = parseInt(questionBlock.dataset.module);
+            const totalQ = state.moduleQuestions[moduleNum].total;
+            
+            // 更新计数器
+            if (counter) {
+                counter.textContent = `${currentQ} / ${totalQ}`;
+            }
+            
+            // 更新上一题按钮状态
+            if (prevBtn) {
+                if (currentQ <= 1) {
+                    prevBtn.disabled = true;
+                    prevBtn.style.opacity = '0.4';
+                } else {
+                    prevBtn.disabled = false;
+                    prevBtn.style.opacity = '1';
+                }
+            }
+            
+            // 更新下一题按钮状态
+            if (nextBtn) {
+                if (currentQ >= totalQ) {
+                    // 最后一题，修改按钮文字和样式
+                    nextBtn.textContent = getFinalNextButtonText(moduleNum);
+                    nextBtn.classList.add('q-nav-btn-next');
+                } else {
+                    nextBtn.disabled = false;
+                    nextBtn.style.opacity = '1';
+                    nextBtn.textContent = '下一题 →';
+                    nextBtn.classList.add('q-nav-btn-next');
+                }
+            }
+        }
+
+        /**
+         * 获取模块最后一题的"下一题"按钮文字
+         */
+        function getFinalNextButtonText(moduleNum) {
+            switch(moduleNum) {
+                case 1: return '完成模块一 →';
+                case 2: return '进入视觉冥想 →';
+                case 3: return '查看我的结果 →';
+                default: return '继续 →';
+            }
+        }
+
+        /**
+         * 验证单选题是否已回答
+         */
+        function validateSingleQuestion(questionBlock) {
+            const optionsList = questionBlock.querySelector('.options-list');
+            const selectedOption = optionsList.querySelector('.option-item.selected');
+            
+            if (!selectedOption) {
+                // 未选择，给出视觉反馈
+                questionBlock.style.borderLeft = '4px solid #e74c3c';
+                shakeElement(questionBlock);
+                setTimeout(() => {
+                    questionBlock.style.borderLeft = '';
+                }, 1500);
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * 元素抖动动画（错误提示）
+         */
+        function shakeElement(el) {
+            el.style.animation = 'none';
+            el.offsetHeight; // 触发重绘
+            el.style.animation = 'shake 0.5s ease-in-out';
+        }
+
+        // 添加抖动动画关键帧
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-8px); }
+                40%, 80% { transform: translateX(8px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+
+        // ========== 模块级导航函数 ==========
+        
+        function nextModule() {
+            // 验证当前模块所有题目是否已完成
+            if (!validateCurrentModule()) return;
+
+            if (state.currentModule < state.totalModules) {
+                // 如果当前是模块二（音频模块），停止所有音频播放并清理资源
+                if (state.currentModule === 2 && typeof stopAudio === 'function') {
+                    stopAudio(); // 停止所有音频
+                }
+                
+                // 保存当前模块答案逻辑已在选项点击时完成
+                
+                // 隐藏当前模块
+                document.getElementById(`module${state.currentModule}`).classList.remove('active');
+                
+                state.currentModule++;
+                
+                // 显示新模块
+                setTimeout(() => {
+                    document.getElementById(`module${state.currentModule}`).classList.add('active');
+                    updateProgress();
+                    
+                    // 如果是模块三（视觉冥想），启动第一个凝视计时器
+                    if (state.currentModule === 3 && typeof startGazeTimer === 'function') {
+                        startGazeTimer(1);
+                    }
+                    
+                    // 显示新模块的第1题
+                    let firstQ;
+                    if (state.currentModule === 1) firstQ = 1;
+                    if (state.currentModule === 2) firstQ = 5;
+                    if (state.currentModule === 3) firstQ = 8;
+                    showQuestion(firstQ);
+                    
+                    // 滚动到顶部
+                    document.getElementById('experience').scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+            }
+        }
+
+        function prevModule() {
+            if (state.currentModule > 1) {
+                // 如果当前是模块二（音频模块），停止所有音频播放并清理资源
+                if (state.currentModule === 2 && typeof stopAudio === 'function') {
+                    stopAudio(); // 停止所有音频
+                }
+                // 如果当前是模块三（视觉冥想），清理所有凝视计时器
+                if (state.currentModule === 3 && typeof clearGazeTimer === 'function') {
+                    clearGazeTimer(); // 清理所有计时器
+                }
+                
+                document.getElementById(`module${state.currentModule}`).classList.remove('active');
+                state.currentModule--;
+                state.moduleQuestions[state.currentModule].current = 1;
+                
+                setTimeout(() => {
+                    document.getElementById(`module${state.currentModule}`).classList.add('active');
+                    updateProgress();
+                    
+                    const firstQ = state.moduleQuestions[state.currentModule].current;
+                    showQuestion(firstQ);
+                    
+                    document.getElementById('experience').scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+            }
+        }
+
+        /**
+         * 验证当前模块的所有题目是否都已回答
+         * @returns {boolean} - 是否所有题目都已回答
+         */
+        function validateCurrentModule() {
+            const currentModuleEl = document.getElementById(`module${state.currentModule}`);
+            // 验证当前模块的所有题目，而不仅是可见题目
+            const questions = currentModuleEl.querySelectorAll('.question-block');
+            let allAnswered = true;
+            let unansweredQuestions = [];
+
+            questions.forEach((q, index) => {
+                const options = q.querySelectorAll('.option-item');
+                const hasSelection = Array.from(options).some(opt => opt.classList.contains('selected'));
+                if (!hasSelection) {
+                    allAnswered = false;
+                    unansweredQuestions.push(index + 1);
+                    
+                    // 仅对当前可见的未回答题目显示提示
+                    if (!q.classList.contains('hidden')) {
+                        q.style.borderLeft = '4px solid #e74c3c';
+                        setTimeout(() => { q.style.borderLeft = ''; }, 2000);
+                    }
+                }
+            });
+
+            if (!allAnswered) {
+                const questionStr = unansweredQuestions.join('、');
+                showToast(`请完成第 ${questionStr} 题后再继续~ ☺️`);
+                return false;
+            }
+            return true;
+        }
+
+        // ========== 选项点击处理 ==========
+        document.addEventListener('click', function(e) {
+            const optionItem = e.target.closest('.option-item');
+            if (!optionItem) return;
+
+            const questionBlock = optionItem.closest('.question-block');
+            const optionsList = optionItem.closest('.options-list');
+            const type = optionsList.dataset.type;
+            const value = optionItem.dataset.value;
+            const questionNum = parseInt(questionBlock.dataset.question);
+
+            if (type === 'single') {
+                // 单选：清除同题其他选项的选中状态
+                optionsList.querySelectorAll('.option-item').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                optionItem.classList.add('selected');
+                
+                // 保存答案
+                state.answers[`q${questionNum}`] = value;
+
+                // 自动更新题目导航按钮的计数器显示
+                updateQuestionNavButtons(questionNum);
+
+            } else if (type === 'multiple') {
+                // 多选
+                const maxSelect = parseInt(optionsList.dataset.max) || 2;
+                const selectedCount = optionsList.querySelectorAll('.option-item.selected').length;
+
+                if (optionItem.classList.contains('selected')) {
+                    optionItem.classList.remove('selected');
+                } else {
+                    if (selectedCount < maxSelect) {
+                        optionItem.classList.add('selected');
+                    } else {
+                        showToast(`最多可选择 ${maxSelect} 个选项哦~`);
+                        return;
+                    }
+                }
+
+                // 收集多选答案
+                const selectedValues = [];
+                optionsList.querySelectorAll('.option-item.selected').forEach(opt => {
+                    selectedValues.push(opt.dataset.value);
+                });
+                state.answers[`q${questionNum}`] = selectedValues.join(',');
+            }
+        });
+
+        // Toast 提示框
+        function showToast(message) {
+            // 移除已有的 toast
+            const existingToast = document.querySelector('.toast-notification');
+            if (existingToast) existingToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--color-text);
+                color: white;
+                padding: 0.8rem 1.5rem;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                z-index: 9999;
+                animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            `;
+            
+            // 添加动画样式
+            const toastStyle = document.createElement('style');
+            toastStyle.textContent = `
+                @keyframes toastIn {
+                    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+                }
+                @keyframes toastOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(toastStyle);
+
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2500);
+        }
+
+        // ========== 问题二修复：音频播放系统（使用 Web Audio API）==========
+        
+        /**
+         * 初始化 Web Audio API
+         */
+        function initAudioContext() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                state.audioContext = new AudioContext();
+                console.log('✅ Web Audio API 初始化成功');
+                return true;
+            } catch (e) {
+                console.error('❌ Web Audio API 不支持:', e);
+                return false;
+            }
+        }
+
+        /**
+         * 创建白噪音（模拟雨声）
+         * 使用 Web Audio API 生成真实的白噪音
+         */
+        /**
+         * 创建雨声白噪音
+         * @returns {AudioBuffer} 音频缓冲区
+         */
+        function createRainNoise() {
+            if (!state.audioContext) {
+                if (!initAudioContext()) return null;
+            }
+
+            const ctx = state.audioContext;
+            const sampleRate = ctx.sampleRate || 44100;
+            
+            // 创建音频缓冲区（2秒循环缓冲）
+            const bufferSize = 2 * sampleRate;
+            const buffer = ctx.createBuffer(1, bufferSize, sampleRate);
+            const outputData = buffer.getChannelData(0);
+            
+            // 生成白噪音数据
+            for (let i = 0; i < bufferSize; i++) {
+                // 生成 -1 到 1 的随机数
+                outputData[i] = Math.random() * 2 - 1;
+            }
+            
+            // 应用简单的低通滤波器让声音更柔和（模拟远处雨声）
+            for (let i = 1; i < bufferSize; i++) {
+                outputData[i] = (outputData[i] + outputData[i-1]) / 2;
+            }
+            
+            return buffer;
+        }
+        
+        /**
+         * 创建钢琴音乐（简化的正弦波）
+         * @returns {AudioBuffer} 音频缓冲区
+         */
+        function createPianoMusic() {
+            if (!state.audioContext) {
+                if (!initAudioContext()) return null;
+            }
+
+            const ctx = state.audioContext;
+            const sampleRate = ctx.sampleRate || 44100;
+            
+            // 创建音频缓冲区（4秒循环缓冲）
+            const bufferSize = 4 * sampleRate;
+            const buffer = ctx.createBuffer(1, bufferSize, sampleRate);
+            const outputData = buffer.getChannelData(0);
+            
+            // 生成简单的钢琴旋律（C大调音阶）
+            const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // C4到C5
+            const noteDuration = bufferSize / notes.length;
+            
+            for (let i = 0; i < bufferSize; i++) {
+                const noteIndex = Math.floor(i / noteDuration);
+                const frequency = notes[noteIndex];
+                const time = i / sampleRate;
+                
+                // 生成正弦波，并添加音量衰减
+                const envelope = 1 - (i / bufferSize);
+                outputData[i] = Math.sin(2 * Math.PI * frequency * time) * envelope * 0.3;
+            }
+            
+            return buffer;
+        }
+        
+        /**
+         * 创建ASMR触发音（轻柔的脉冲声）
+         * @returns {AudioBuffer} 音频缓冲区
+         */
+        function createASMR() {
+            if (!state.audioContext) {
+                if (!initAudioContext()) return null;
+            }
+
+            const ctx = state.audioContext;
+            const sampleRate = ctx.sampleRate || 44100;
+            
+            // 创建音频缓冲区（3秒循环缓冲）
+            const bufferSize = 3 * sampleRate;
+            const buffer = ctx.createBuffer(1, bufferSize, sampleRate);
+            const outputData = buffer.getChannelData(0);
+            
+            // 生成轻柔的ASMR触发音（快速脉冲）
+            const pulseInterval = sampleRate / 10; // 每秒10个脉冲
+            
+            for (let i = 0; i < bufferSize; i++) {
+                if (i % pulseInterval < pulseInterval / 2) {
+                    // 脉冲部分：快速衰减的正弦波
+                    const pulseTime = (i % pulseInterval) / sampleRate;
+                    outputData[i] = Math.sin(2 * Math.PI * 800 * pulseTime) * Math.exp(-pulseTime * 50) * 0.2;
+                } else {
+                    // 静默部分
+                    outputData[i] = 0;
+                }
+            }
+            
+            return buffer;
+        }
+
+        /**
+         * 播放/暂停音频
+         * @param {number} audioIndex - 音频索引（1-3）
+         */
+        function toggleAudioPlay(audioIndex = 1) {
+            try {
+                if (!state.audioContext) {
+                    if (!initAudioContext()) {
+                        showToast('您的浏览器不支持 Web Audio API，无法播放音频');
+                        return;
+                    }
+                }
+
+                // 检查音频上下文状态
+                if (state.audioContext.state === 'suspended') {
+                    state.audioContext.resume().catch(err => {
+                        console.error('音频上下文恢复失败:', err);
+                        showToast('音频播放失败，请稍后重试');
+                    });
+                }
+
+                const visualizer = document.getElementById(`audioVisualizer${audioIndex}`);
+                const playBtn = document.getElementById(`playBtnIcon${audioIndex}`);
+
+                // 停止其他音频播放器
+                for (let i = 1; i <= 3; i++) {
+                    if (i !== audioIndex && state[`audioPlaying${i}`]) {
+                        pauseAudio(i);
+                        const otherBtn = document.getElementById(`playBtnIcon${i}`);
+                        const otherVisualizer = document.getElementById(`audioVisualizer${i}`);
+                        if (otherBtn) otherBtn.textContent = '▶';
+                        if (otherVisualizer) otherVisualizer.classList.remove('playing');
+                    }
+                }
+
+                if (state[`audioPlaying${audioIndex}`]) {
+                    // 暂停
+                    pauseAudio(audioIndex);
+                    playBtn.textContent = '▶';
+                    visualizer.classList.remove('playing');
+                } else {
+                    // 播放
+                    playAudio(audioIndex);
+                    playBtn.textContent = '❚❚';
+                    visualizer.classList.add('playing');
+                }
+            } catch (error) {
+                console.error('音频播放操作失败:', error);
+                showToast('音频播放出现问题，请刷新页面重试');
+            }
+        }
+
+        /**
+         * 开始播放音频
+         * @param {number} audioIndex - 音频索引（1-3）
+         */
+        function playAudio(audioIndex = 1) {
+            try {
+                const ctx = state.audioContext;
+                const duration = audioIndex === 2 ? 30 : (audioIndex === 3 ? 20 : 25);
+                
+                // 根据不同的音频索引创建不同类型的声音
+                let audioBuffer;
+                if (audioIndex === 1) {
+                    audioBuffer = createRainNoise(); // 雨声白噪音
+                } else if (audioIndex === 2) {
+                    audioBuffer = createPianoMusic(); // 钢琴冥想音乐
+                } else {
+                    audioBuffer = createASMR(); // ASMR触发音
+                }
+                
+                if (!audioBuffer) {
+                    throw new Error('无法创建音频缓冲区');
+                }
+                
+                const source = ctx.createBufferSource();
+                source.buffer = audioBuffer;
+                source.loop = true; // 循环播放
+                
+                // 创建增益节点（音量控制）
+                if (!state[`audioGainNode${audioIndex}`]) {
+                    state[`audioGainNode${audioIndex}`] = ctx.createGain();
+                    state[`audioGainNode${audioIndex}`].connect(ctx.destination);
+                    state[`audioGainNode${audioIndex}`].gain.value = state.audioVolume;
+                }
+                
+                // 连接源 -> 增益 -> 输出
+                source.connect(state[`audioGainNode${audioIndex}`]);
+                
+                // 开始播放
+                const startTime = ctx.currentTime;
+                source.start(startTime);
+                state[`audioStartTime${audioIndex}`] = startTime;
+                state[`audioPlaying${audioIndex}`] = true;
+                
+                // 启动进度更新
+                startAudioProgressUpdater(source, duration, audioIndex);
+            } catch (error) {
+                console.error('音频播放失败:', error);
+                showToast('音频播放失败，请检查浏览器权限设置');
+                // 重置播放状态
+                state[`audioPlaying${audioIndex}`] = false;
+                const playBtn = document.getElementById(`playBtnIcon${audioIndex}`);
+                const visualizer = document.getElementById(`audioVisualizer${audioIndex}`);
+                if (playBtn) playBtn.textContent = '▶';
+                if (visualizer) visualizer.classList.remove('playing');
+            }
+        }
+
+        /**
+         * 暂停音频
+         * @param {number} audioIndex - 音频索引（1-3）
+         */
+        function pauseAudio(audioIndex = 1) {
+            if (state.audioContext && state[`audioGainNode${audioIndex}`]) {
+                state[`audioGainNode${audioIndex}`].gain.setTargetAtTime(0, state.audioContext.currentTime, 0.05);
+                state[`audioPlaying${audioIndex}`] = false;
+                state[`audioPausedAt${audioIndex}`] = state.audioContext.currentTime - state[`audioStartTime${audioIndex}`];
+            }
+        }
+
+        /**
+         * 停止音频并清理资源
+         * @param {number} audioIndex - 音频索引（1-3），不指定则停止所有音频
+         */
+        function stopAudio(audioIndex = null) {
+            if (audioIndex === null) {
+                // 停止所有音频
+                for (let i = 1; i <= 3; i++) {
+                    stopAudio(i);
+                }
+                return;
+            }
+            
+            // 清理进度更新定时器
+            if (state[`audioProgressInterval${audioIndex}`]) {
+                clearInterval(state[`audioProgressInterval${audioIndex}`]);
+                state[`audioProgressInterval${audioIndex}`] = null;
+            }
+            
+            // 停止音频源
+            if (state.audioContext && state[`audioGainNode${audioIndex}`]) {
+                // 重置增益
+                state[`audioGainNode${audioIndex}`].gain.setTargetAtTime(0, state.audioContext.currentTime, 0.01);
+            }
+            
+            state[`audioPlaying${audioIndex}`] = false;
+            state[`audioStartTime${audioIndex}`] = 0;
+            state[`audioPausedAt${audioIndex}`] = 0;
+            
+            // 重置UI
+            const playBtn = document.getElementById(`playBtnIcon${audioIndex}`);
+            const visualizer = document.getElementById(`audioVisualizer${audioIndex}`);
+            if (playBtn) playBtn.textContent = '▶';
+            if (visualizer) visualizer.classList.remove('playing');
+            
+            // 重置进度条
+            document.getElementById(`audioProgressFill${audioIndex}`).style.width = '0%';
+            document.getElementById(`audioCurrentTime${audioIndex}`).textContent = '0:00';
+        }
+
+        /**
+         * 音频进度更新器
+         * @param {AudioBufferSourceNode} source - 音频源节点
+         * @param {number} duration - 音频时长（秒）
+         * @param {number} audioIndex - 音频索引（1-3）
+         */
+        function startAudioProgressUpdater(source, duration, audioIndex = 1) {
+            const progressFill = document.getElementById(`audioProgressFill${audioIndex}`);
+            const currentTimeDisplay = document.getElementById(`audioCurrentTime${audioIndex}`);
+            const progressBar = document.getElementById(`audioProgressBar${audioIndex}`);
+            
+            // 清理之前的定时器
+            if (state[`audioProgressInterval${audioIndex}`]) {
+                clearInterval(state[`audioProgressInterval${audioIndex}`]);
+            }
+            
+            state[`audioProgressInterval${audioIndex}`] = setInterval(() => {
+                if (!state[`audioPlaying${audioIndex}`]) {
+                    // 已暂停，停止更新但不清除interval（以便恢复）
+                    return;
+                }
+                
+                if (state.audioContext && source) {
+                    const currentTime = state.audioContext.currentTime - state[`audioStartTime${audioIndex}`];
+                    
+                    // 循环处理超过时长的情况
+                    const displayTime = currentTime % duration;
+                    const progress = (displayTime / duration) * 100;
+                    
+                    // 更新UI
+                    progressFill.style.width = `${Math.min(progress, 100)}%`;
+                    currentTimeDisplay.textContent = formatTime(displayTime);
+                    
+                    // 如果接近结束（用于演示），可以重新开始或停止
+                    if (currentTime >= duration + 1) {
+                        // 可选：自动停止或循环
+                        // 这里我们让它继续播放（因为设置了loop=true）
+                    }
+                }
+            }, 100); // 每100ms更新一次
+            
+            // interval ID 已经保存在 state[`audioProgressInterval${audioIndex}`] 中，不需要额外保存
+        }
+
+        /**
+         * 格式化时间显示
+         */
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        /**
+         * 拖拽进度条跳转
+         */
+        function seekAudio(event) {
+            if (!state.audioContext || !state.audioPlaying) return;
+            
+            const bar = event.currentTarget;
+            const rect = bar.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+            const duration = state.audioDuration;
+            const seekTime = percent * duration;
+            
+            // 重置起始时间以实现正确跳转
+            state.audioStartTime = state.audioContext.currentTime - seekTime;
+            
+            // 更新显示
+            document.getElementById('audioProgressFill').style.width = `${percent * 100}%`;
+            document.getElementById('audioCurrentTime').textContent = formatTime(seekTime);
+        }
+
+        /**
+         * 改变音量
+         */
+        function changeVolume(value) {
+            state.audioVolume = value / 100;
+            document.getElementById('volumeValue').textContent = `${value}%`;
+            
+            if (state.audioGainNode && state.audioContext) {
+                state.audioGainNode.gain.setTargetAtTime(
+                    state.audioVolume, 
+                    state.audioContext.currentTime, 
+                    0.05
+                );
+            }
+        }
+
+        // ========== 视觉冥想计时器 ==========
+        
+        /**
+         * 启动视觉冥想倒计时
+         * @param {number} timerIndex - 计时器索引（1-3）
+         */
+        function startGazeTimer(timerIndex = 1) {
+            const timerEl = document.getElementById(`gazeTimer${timerIndex}`);
+            if (!timerEl) return;
+            
+            // 清除之前的计时器
+            if (state[`gazeTimerInterval${timerIndex}`]) {
+                clearInterval(state[`gazeTimerInterval${timerIndex}`]);
+                state[`gazeTimerInterval${timerIndex}`] = null;
+            }
+            
+            let countdown = 15;
+            timerEl.textContent = `请凝视图像... ${countdown}秒`;
+            
+            state[`gazeTimerInterval${timerIndex}`] = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    timerEl.textContent = `请凝视图像... ${countdown}秒`;
+                } else {
+                    timerEl.textContent = `完成凝视 ✅`;
+                    clearInterval(state[`gazeTimerInterval${timerIndex}`]);
+                    state[`gazeTimerInterval${timerIndex}`] = null;
+                }
+            }, 1000);
+        }
+
+        /**
+         * 清理视觉冥想计时器
+         * @param {number} timerIndex - 计时器索引（1-3），不指定则清理所有计时器
+         */
+        function clearGazeTimer(timerIndex = null) {
+            if (timerIndex === null) {
+                // 清理所有计时器
+                for (let i = 1; i <= 3; i++) {
+                    clearGazeTimer(i);
+                }
+                return;
+            }
+            
+            if (state[`gazeTimerInterval${timerIndex}`]) {
+                clearInterval(state[`gazeTimerInterval${timerIndex}`]);
+                state[`gazeTimerInterval${timerIndex}`] = null;
+            }
+            const timerEl = document.getElementById(`gazeTimer${timerIndex}`);
+            if (timerEl) {
+                timerEl.textContent = '请凝视图像... 15秒';
+            }
+        }
+
+        // ========== 结果生成 ==========
+        function showResult() {
+            if (!validateCurrentModule()) return;
+
+            // 隐藏所有模块
+            document.getElementById('module1').classList.remove('active');
+            document.getElementById('module2').classList.remove('active');
+            document.getElementById('module3').classList.remove('active');
+            document.getElementById('progressBar').classList.add('hidden');
+
+            // 显示结果页
+            const resultPage = document.getElementById('resultPage');
+            resultPage.classList.add('show');
+
+            // 计算并填充结果
+            generateResult();
+
+            // 滚动到结果
+            setTimeout(() => {
+                resultPage.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function generateResult() {
+            // 获取第1题答案（天气）
+            const q1Answer = state.answers.q1 || 'B';
+            const weather = weatherTypes[q1Answer];
+            document.getElementById('resultWeatherIcon').textContent = weather.icon;
+            document.getElementById('resultWeatherType').textContent = weather.type;
+            document.getElementById('resultWeatherDesc').textContent = weather.desc;
+
+            // 获取第2题答案（压力分数）
+            const q2Answer = state.answers.q2 || 'C';
+            const stressScore = stressScores[q2Answer];
+            const stressLevel = stressScore <= 30 ? '轻度' : (stressScore <= 60 ? '轻中度' : (stressScore <= 80 ? '中重度' : '重度'));
+            document.getElementById('resultStressScore').textContent = `${stressScore}/100 · ${stressLevel}`;
+
+            // 获取第3题答案（身体信号）
+            const q3Answer = state.answers.q3 || 'A,F';
+            const signals = q3Answer.split(',').map(s => bodySignals[s] || '').filter(s => s);
+            document.getElementById('resultBodySignal').textContent = signals.join(' / ') || '暂无明显信号';
+
+            // 获取第4题答案（需求）
+            const q4Answer = state.answers.q4 || 'A';
+            document.getElementById('resultNeed').textContent = needsMap[q4Answer] || '需要关怀';
+
+            // 根据多个音频体验答案调整推荐
+            const audioAnswers = [
+                state.answers.q5 || 'A',
+                state.answers.q6 || 'A',
+                state.answers.q7 || 'A'
+            ];
+            updateRecommendations(audioAnswers);
+            
+            // 根据视觉体验答案调整建议
+            const visualAnswers = [
+                state.answers.q8 || 'A',
+                state.answers.q9 || 'A',
+                state.answers.q10 || 'A'
+            ];
+            updateVisualRecommendations(visualAnswers);
+        }
+
+        function updateRecommendations(audioAnswers) {
+            // 分析多个音频答案，找出最常见的偏好类型
+            const answerCount = {};
+            audioAnswers.forEach(answer => {
+                answerCount[answer] = (answerCount[answer] || 0) + 1;
+            });
+            
+            // 找出出现次数最多的答案
+            let mostCommonAnswer = 'A';
+            let maxCount = 0;
+            for (const [answer, count] of Object.entries(answerCount)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostCommonAnswer = answer;
+                }
+            }
+            
+            const audioRecs = {
+                'A': [
+                    '主导类型：自然疗愈型（雨声、海浪、白噪音）',
+                    '最佳聆听时段：睡前或工作间隙需要放松时',
+                    '推荐完整版：「深夜海浪」·「森林溪流」·「晨间细雨」·「ASMR触发音」'
+                ],
+                'B': [
+                    '主导类型：清新自然型（鸟鸣、风声、自然环境音）',
+                    '最佳聆听时段：早晨醒来或需要专注工作时',
+                    '推荐：「春日鸟鸣」·「山林风声」·「咖啡厅白噪音」·「钢琴冥想」'
+                ],
+                'C': [
+                    '主导类型：中性平衡型（对各种声音接受度高）',
+                    '最佳聆听时段：任何需要放松或专注的时刻',
+                    '推荐：「钢琴呼吸」·「432Hz深度放松」·「大提琴拥抱」·「ASMR疗愈」'
+                ],
+                'D': [
+                    '主导类型：情感共鸣型（音乐触动内心）',
+                    '最佳聆听时段：情绪低落或需要宣泄释放时',
+                    '推荐：「大提琴拥抱」·「水晶琴空灵」·「弦乐四重奏」·「钢琴冥想」'
+                ],
+                'E': [
+                    '主导类型：安静偏好型（喜欢极简或无声音环境）',
+                    '最佳聆听时段：冥想入睡前或深度工作需要隔离时',
+                    '推荐：「432Hz宇宙和谐」·「Alpha波专注」·「极简白噪音」·「自然风声」'
+                ]
+            };
+
+            const audioList = document.getElementById('audioRecommendation');
+            if (audioList && audioRecs[mostCommonAnswer]) {
+                audioList.innerHTML = audioRecs[mostCommonAnswer]
+                    .map(item => `<div class="recommendation-item">${item}</div>`)
+                    .join('');
+            }
+        }
+
+        /**
+         * 根据视觉体验答案更新视觉推荐
+         * @param {Array} visualAnswers - 视觉体验答案数组
+         */
+        function updateVisualRecommendations(visualAnswers) {
+            // 分析多个视觉答案，找出最常见的偏好类型
+            const answerCount = {};
+            visualAnswers.forEach(answer => {
+                answerCount[answer] = (answerCount[answer] || 0) + 1;
+            });
+            
+            // 找出出现次数最多的答案
+            let mostCommonAnswer = 'A';
+            let maxCount = 0;
+            for (const [answer, count] of Object.entries(answerCount)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostCommonAnswer = answer;
+                }
+            }
+            
+            const visualRecs = {
+                'A': [
+                    '视觉偏好：温暖感性型（喜欢柔和色彩和自然元素）',
+                    '推荐视觉体验：自然风景、柔和色彩、温暖色调',
+                    '适合场景：放松冥想、情绪安抚、睡前放松'
+                ],
+                'B': [
+                    '视觉偏好：平静舒适型（喜欢清新自然的视觉元素）',
+                    '推荐视觉体验：森林、海洋、天空、自然景观',
+                    '适合场景：减压放松、专注力提升、情绪调节'
+                ],
+                'C': [
+                    '视觉偏好：平衡中性型（对各种视觉元素接受度高）',
+                    '推荐视觉体验：抽象艺术、几何图形、色彩平衡的画面',
+                    '适合场景：创造性思考、冥想练习、情绪平衡'
+                ],
+                'D': [
+                    '视觉偏好：宁静放松型（喜欢柔和舒缓的视觉体验）',
+                    '推荐视觉体验：柔和渐变、模糊效果、宁静场景',
+                    '适合场景：深度放松、睡眠辅助、压力缓解'
+                ],
+                'E': [
+                    '视觉偏好：简约理性型（喜欢简洁清晰的视觉元素）',
+                    '推荐视觉体验：极简设计、单一色彩、清晰线条',
+                    '适合场景：深度工作、专注力训练、思维整理'
+                ]
+            };
+
+            // 使用现有的视觉推荐区域
+            const visualRecommendation = document.getElementById('visualRecommendation');
+            if (visualRecommendation && visualRecs[mostCommonAnswer]) {
+                visualRecommendation.innerHTML = visualRecs[mostCommonAnswer]
+                    .map(item => `<div class="recommendation-item">${item}</div>`)
+                    .join('');
+            }
+        }
+
+        // ========== 页面加载初始化 ==========
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+
+            // 初始化音频上下文（预加载，避免首次点击延迟）
+            initAudioContext();
+
+            console.log('%c☁ 内在天气 · 五感重启体验', 'font-size: 24px; color: #9CAF98;');
+            console.log('%c✅ 音频系统已就绪（Web Audio API）', 'font-size: 14px; color: #66bb6a;');
+            console.log('%c💡 提示：点击圆形播放按钮即可听到雨声白噪音', 'font-size: 12px; color: #888;');
+        });
+
+        // ========== 平滑滚动增强 ==========
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
